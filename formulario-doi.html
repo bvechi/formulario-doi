@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Solicitação de DOI</title>
+  <style>
+    :root {
+      --azul-primario: #0056b3;
+      --amarelo-aviso: #fff3cd;
+      --borda-aviso: #ffc107;
+      --cinza-fundo: #f4f4f4;
+      --texto: #333;
+      --foco: #004494;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--cinza-fundo);
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      color: var(--texto);
+      line-height: 1.6;
+    }
+    h2 {
+      color: var(--azul-primario);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--foco);
+      border-color: var(--foco);
+    }
+    textarea {
+      resize: vertical;
+    }
+    .subsection {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 10px;
+      background: white;
+    }
+    .add-btn, button[type="submit"] {
+      margin-top: 10px;
+      padding: 10px 16px;
+      background-color: var(--azul-primario);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .add-btn:hover, button[type="submit"]:hover {
+      background-color: var(--foco);
+    }
+    .instrucoes {
+      margin-bottom: 24px;
+    }
+    .observacao {
+      background: var(--amarelo-aviso);
+      border-left: 4px solid var(--borda-aviso);
+      padding: 16px;
+      margin: 16px 0;
+      font-style: italic;
+    }
+    ul {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h2>Formulário de Solicitação de DOI</h2>
+
+  <div class="instrucoes">
+    <p>Este formulário foi criado para apoiar Bibliotecários na atribuição de DOIs a publicações científicas e técnicas.</p>
+    <div class="observacao">
+      <strong>Atenção:</strong> o DOI só será registrado e validado após a publicação do material.
+    </div>
+    <p><strong>Orientações Gerais:</strong></p>
+    <ul>
+      <li><strong>Livros com ISBN:</strong> o sufixo do DOI será igual ao número de ISBN.</li>
+      <li><strong>Livros sem ISBN:</strong> receberão um sufixo próprio, composto pelo nome da editora e pelo ID da submissão no sistema OMP, no formato <code>DTCGTI.ID</code>.</li>
+      <li><strong>Livros com DOI em capítulos:</strong> cada capítulo terá seu DOI individual, no formato <code>ISBN.capnº</code>, desde que possuam arquivos PDF próprios no sistema.</li>
+    </ul>
+    <p><strong>Exemplos Práticos:</strong></p>
+    <ul>
+      <li><strong>ID 387 no OMP</strong> – Ibict 70 anos. DOI: 10.22477/9786589167457</li>
+      <li><strong>ID 589 no OMP</strong> – Guia do colaborador. DOI: 10.22477/DTCGTI.589</li>
+    </ul>
+  </div>
+
+  <form id="formDoi">
+    <div class="form-group">
+      <label for="bibliotecario">Nome do Bibliotecário Responsável</label>
+      <input type="text" id="bibliotecario" required>
+    </div>
+
+    <div class="form-group">
+      <label for="emailBibliotecario">E-mail do Bibliotecário</label>
+      <input type="email" id="emailBibliotecario" required>
+    </div>
+
+    <div class="form-group">
+      <label for="editoraOMP">Editora no OMP</label>
+      <select id="editoraOMP" required>
+        <option value="">Selecione</option>
+        <option value="Editora Ibict">Editora Ibict</option>
+        <option value="Editora Cotec">Editora Cotec</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="idOmp">ID no OMP</label>
+      <input type="text" id="idOmp">
+    </div>
+
+    <div class="form-group">
+      <label for="tipoPublicacao">Tipo de Publicação</label>
+      <select id="tipoPublicacao" onchange="toggleCampos()">
+        <option value="">Selecione</option>
+        <option value="guia">Guia</option>
+        <option value="livro">Livro</option>
+      </select>
+    </div>
+	<div class="form-group">
+	  <label for="titulo">Título da Obra</label>
+	  <input type="text" id="titulo" required>
+	</div>
+    <div class="form-group" id="campoISBN">
+      <label for="isbn">ISBN (se houver)</label>
+      <input type="text" id="isbn">
+    </div>
+
+    <div class="form-group" id="grupoTemOrganizadores" style="display: none;">
+      <label for="temOrganizadores">A obra possui organizadores?</label>
+      <select id="temOrganizadores" onchange="toggleOrganizadores()">
+        <option value="">Selecione</option>
+        <option value="sim">Sim</option>
+        <option value="nao">Não</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="grupoOrganizadores" style="display: none;">
+      <label>Organizadores</label>
+      <div id="organizadoresContainer"></div>
+      <button type="button" class="add-btn" onclick="adicionarOrganizador()">+ Adicionar Organizador</button>
+    </div>
+
+    <div class="form-group">
+      <label>Autores</label>
+      <div id="autoresContainer"></div>
+      <button type="button" class="add-btn" onclick="adicionarAutor()">+ Adicionar Autor</button>
+    </div>
+
+    <div class="form-group" id="grupoCapitulos" style="display: none;">
+      <label for="capitulosDOI">Deseja atribuir DOI a capítulos individualmente?</label>
+      <select id="capitulosDOI" onchange="toggleCapitulos()">
+        <option value="nao">Não</option>
+        <option value="sim">Sim</option>
+      </select>
+      <small><em>Somente capítulos com PDF individual no OMP poderão ter DOI próprio.</em></small>
+    </div>
+
+    <div id="capitulosContainer"></div>
+    <button type="button" class="add-btn" onclick="adicionarCapitulo()" id="btnAddCapitulo" style="display: none;">+ Adicionar Capítulo</button>
+
+    <div class="form-group">
+      <label for="informacoesAdicionais">Informações adicionais</label>
+      <textarea id="informacoesAdicionais" rows="4"></textarea>
+    </div>
+
+    <button type="submit" class="add-btn">Enviar Solicitação</button>
+  </form>
+
+  <script>
+    let contadorAutores = 0;
+    let contadorOrganizadores = 0;
+    let contadorCapitulos = 0;
+
+    function toggleCampos() {
+      const tipo = document.getElementById('tipoPublicacao').value;
+      document.getElementById('campoISBN').style.display = tipo === 'livro' ? 'block' : 'none';
+      document.getElementById('grupoTemOrganizadores').style.display = tipo === 'livro' ? 'block' : 'none';
+    }
+
+    function toggleOrganizadores() {
+      const temOrg = document.getElementById('temOrganizadores').value;
+      document.getElementById('grupoOrganizadores').style.display = temOrg === 'sim' ? 'block' : 'none';
+      document.getElementById('grupoCapitulos').style.display = temOrg === 'sim' ? 'block' : 'none';
+      if (temOrg !== 'sim') {
+        document.getElementById('capitulosContainer').innerHTML = '';
+        document.getElementById('btnAddCapitulo').style.display = 'none';
+      }
+    }
+
+    function adicionarAutor() {
+      contadorAutores++;
+      const div = document.createElement('div');
+      div.className = 'subsection';
+      div.innerHTML = `
+        <label>Nome do Autor ${contadorAutores}</label>
+        <input type="text" required>
+        <label>ORCID</label>
+        <input type="text" placeholder="https://orcid.org/0000-0000-0000-0000">
+      `;
+      document.getElementById('autoresContainer').appendChild(div);
+    }
+
+    function adicionarOrganizador() {
+      contadorOrganizadores++;
+      const div = document.createElement('div');
+      div.className = 'subsection';
+      div.innerHTML = `
+        <label>Nome do Organizador ${contadorOrganizadores}</label>
+        <input type="text" required>
+        <label>ORCID</label>
+        <input type="text" placeholder="https://orcid.org/0000-0000-0000-0000">
+      `;
+      document.getElementById('organizadoresContainer').appendChild(div);
+    }
+
+    function toggleCapitulos() {
+      const mostrar = document.getElementById('capitulosDOI').value === 'sim';
+      document.getElementById('btnAddCapitulo').style.display = mostrar ? 'inline-block' : 'none';
+      document.getElementById('capitulosContainer').innerHTML = '';
+      contadorCapitulos = 0;
+    }
+
+    function adicionarCapitulo() {
+      contadorCapitulos++;
+      const div = document.createElement('div');
+      div.className = 'subsection';
+      div.innerHTML = `
+        <h4>Capítulo ${contadorCapitulos}</h4>
+        <label>Título</label>
+        <input type="text" required>
+        <label>Paginação</label>
+        <input type="text" placeholder="ex: 10–23">
+        <label>Autores</label>
+        <textarea placeholder="SOBRENOME, Nome; ORCID (se houver)"></textarea>
+      `;
+      document.getElementById('capitulosContainer').appendChild(div);
+    }
+
+    document.getElementById('formDoi').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const dados = {
+        bibliotecario: document.getElementById('bibliotecario').value,
+        emailBibliotecario: document.getElementById('emailBibliotecario').value,
+        editoraOMP: document.getElementById('editoraOMP').value,
+        idOmp: document.getElementById('idOmp').value,
+        tipoPublicacao: document.getElementById('tipoPublicacao').value,
+        titulo: document.getElementById('titulo').value,
+        isbn: document.getElementById('isbn').value,
+        organizadores: document.getElementById('organizadoresContainer')?.innerText || '',
+        autores: document.getElementById('autoresContainer')?.innerText || '',
+        capitulos: document.getElementById('capitulosContainer')?.innerText || '',
+        informacoesAdicionais: document.getElementById('informacoesAdicionais').value
+      };
+
+      fetch('https://script.google.com/macros/s/AKfycbzbJrrBkZDy5gkK5BL27T1kpS1VAzTF18NUqk-iNvMTUdGzMLS2pJHoeeNxTw2DJawXdA/exec', {
+        method: 'POST',
+        body: JSON.stringify(dados),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            alert('Solicitação enviada com sucesso! Você receberá um e-mail de confirmação.');
+            document.getElementById('formDoi').reset();
+          } else {
+            alert('Erro ao enviar. Por favor, tente novamente.');
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          alert('Erro de conexão. Verifique sua internet ou tente mais tarde.');
+        });
+    });
+  </script>
+</body>
+</html>
