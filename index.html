@@ -282,23 +282,18 @@
 
       fetch('https://script.google.com/macros/s/AKfycbyW4XJjRlWoAclP4Na-mOmoXesyBEoed5ezSVk4AybRaC8HqnyuI0qq1iExnEk2oBbeQw/exec', {
         method: 'POST',
+        mode: 'no-cors', // impede que o navegador bloqueie
         body: JSON.stringify(dados),
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-        .then(data => {
-          if (data.status === 'ok') {
-            alert('Solicitação enviada com sucesso! Você receberá um e-mail de confirmação.');
-            document.getElementById('formDoi').reset();
-          } else {
-            alert('Erro ao enviar. Por favor, tente novamente.');
-          }
-        })
-        .catch(error => {
-          console.error('Erro:', error);
-          alert('Erro de conexão. Verifique sua internet ou tente mais tarde.');
-        });
+      }).then(() => {
+        alert('Solicitação enviada com sucesso! Você receberá um e-mail de confirmação.');
+        document.getElementById('formDoi').reset();
+      }).catch(error => {
+        console.error('Erro:', error);
+        alert('Erro de conexão.');
+      });
     });
   </script>
 </body>
