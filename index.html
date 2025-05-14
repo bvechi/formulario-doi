@@ -97,15 +97,18 @@
     <div class="observacao">
       <strong>Atenção:</strong> o DOI só será registrado e validado após a publicação do material.
     </div>
-    <p><strong>Orientações Gerais:</strong></p>
+    <p><strong>Orientações Gerais: como saber o DOI da publicação?</strong></p>
     <ul>
       <li><strong>Livros com ISBN:</strong> o sufixo do DOI será igual ao número de ISBN.</li>
       <li><strong>Livros sem ISBN:</strong> receberão um sufixo próprio, composto pelo nome da editora e pelo ID da submissão no sistema OMP, no formato <code>DTCGTI.ID</code>.</li>
       <li><strong>Livros com DOI em capítulos:</strong> cada capítulo terá seu DOI individual, no formato <code>ISBN.capnº</code>, desde que possuam arquivos PDF próprios no sistema.</li>
+	<div class="observacao">
+      <strong>Atenção:</strong> Guias não tem DOI por capítulo.
+    </div>
     </ul>
     <p><strong>Exemplos Práticos:</strong></p>
     <ul>
-      <li><strong>ID 387 no OMP</strong> – Ibict 70 anos. DOI: 10.22477/9786589167457</li>
+      <li><strong>ID 387 no OMP</strong> – Ibict 70 anos. DOI: 10.22477/9786589167457 / DOI do Capítulo 1: 10.22477/9786589167457.cap1</li>
       <li><strong>ID 589 no OMP</strong> – Guia do colaborador. DOI: 10.22477/DTCGTI.589</li>
     </ul>
   </div>
@@ -144,7 +147,7 @@
       </select>
     </div>
 	<div class="form-group">
-	  <label for="titulo">Título da Obra</label>
+	  <label for="titulo">Título da Obra completo (título e subtítulo)</label>
 	  <input type="text" id="titulo" required>
 	</div>
     <div class="form-group" id="campoISBN">
@@ -186,7 +189,7 @@
     <button type="button" class="add-btn" onclick="adicionarCapitulo()" id="btnAddCapitulo" style="display: none;">+ Adicionar Capítulo</button>
 
     <div class="form-group">
-      <label for="informacoesAdicionais">Informações adicionais</label>
+      <label for="informacoesAdicionais">Resumo da Obra (o mesmo que aparece no OMP)</label>
       <textarea id="informacoesAdicionais" rows="4"></textarea>
     </div>
 
